@@ -19,5 +19,5 @@ Create pipeline job using *Jenkinsfile* of this repo
 Execute the job
 It should print the services list as Json and map
 
-![jenkins-job-listing-services](https://github.com/kumvijaya/deploy-services-getter/blob/master/images/jenkins-job-listing-services.png)
+![jenkins-job-listing-services](https://github.com/kumvijaya/deploy-services-getter/blob/main/images/jenkins-job-listing-services.png)
 
