@@ -134,5 +134,7 @@ if html_content:
         if service_names:
             service_names_json = json.dumps(service_names, indent=2)
             print(service_names_json)
+            with open('output.json', 'w') as f:
+                json.dump(service_names_json, f)
         else:
             print(f"service names not found ")    

@@ -9,8 +9,13 @@ node {
             script {
                 sh "python -m pip install -r requirements.txt --user"
                 def serviceGetterCmd = "python service-getter.py --url '$confApiUrl' --appname '$appName'"
-                String servicesOutput = sh(script: serviceGetterCmd, returnStdout: true).trim()
-                echo "Service list getter output: ${servicesOutput}"
+                def status = sh(script: serviceGetterCmd, returnStatus: true)
+                if (status == 0) {
+                    def servicesInfo  = readJSON file: "output.json"
+                    echo "Service getter output: ${servicesInfo}"
+                }else {
+                    error "Failed to get services info"
+                }
             }
         }
     }
