@@ -12,7 +12,7 @@ node {
                     python service-getter.py --url "$confApiUrl" --appname "$appName"
                     
                 """
-                def servicesOutput = sh(script: serviceInfoCommand, returnStdout: true)
+                def servicesOutput = sh(script: serviceInfoCommand, returnStdout: true).trim()
                 echo "Service list getter output: ${servicesOutput}"
             }
         }
