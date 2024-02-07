@@ -11,8 +11,8 @@ node {
                 def serviceGetterCmd = "python service-getter.py --url '$confApiUrl' --appname '$appName'"
                 def status = sh(script: serviceGetterCmd, returnStatus: true)
                 if (status == 0) {
-                    // def servicesInfo = readJSON file: "output.json"
-                    def servicesInfo = readFile "output.json"
+                    def servicesInfo = readJSON file: "output.json"
+                    // def servicesInfo = readFile "output.json"
                     echo "Service getter output: ${servicesInfo}"
                 }else {
                     error "Failed to get services info"
