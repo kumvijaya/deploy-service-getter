@@ -1,10 +1,18 @@
 import requests
-# import parser
-from html.parser import HTMLParser
 from bs4 import BeautifulSoup
 import json
 import argparse
 import os
+
+#Get confluence url and application name
+argparser = argparse.ArgumentParser(prog='service-getter',
+                                    description='To read table content from confluence page and providing output to jenkins pipeline')
+argparser.add_argument('-u', '--url', type=str, metavar='', required=True, help='url to access confluence page')
+argparser.add_argument('-a','--appname', type=str, metavar='', required=True, help='Application name')
+
+args = argparser.parse_args()
+confluence_rest_api = args.url
+application_name = args.appname
 
 # Confluence Username and Apitoken
 username = os.environ["CONFLUENCE_USERNAME"]
@@ -89,15 +97,15 @@ def clean_text(text):
 
 
 def find_service_name(table_data, target_application_name):
-#     """Get the service name from confluence page table
+    """Get the service name from confluence page table
 
-#     Args:
-#         data (str) : table data from confluence
-#         name (str) : application name
-        
-#     Returns:
-#         app_source : Application name and service name as key and value
-#     """    
+    Args:
+        table_data (list): List of dictionaries representing the table data from confluence
+        target_application_name (str): The name of the application to search for
+
+    Returns:
+        dict: A dictionary containing the application name as key and the corresponding service names as value
+    """
     app_source = {}
     for row in table_data:
         application_name = row['Applications']
@@ -113,24 +121,12 @@ def find_service_name(table_data, target_application_name):
             app_source[application_name] = service_data
     return app_source
 
-#Get confluence url and application name
-argparser = argparse.ArgumentParser(prog='service-getter',
-                                    description='To read table content from confluence page and providing output to jenkins pipeline')
-argparser.add_argument('-u', '--url', type=str, metavar='', required=True, help='url to access confluence page')
-argparser.add_argument('-a','--appname', type=str, metavar='', required=True, help='Application name')
-
-args = argparser.parse_args()
-confluence_rest_api = args.url
-application_name = args.appname
-
 #  To get confluence page data
 html_content = get_confluence_page_html(username, confluence_apitoken)
-
 if html_content:
     table_data = extract_table_data(html_content)
     if table_data:
-        service_names = find_service_name(table_data, application_name)
-        # Print the result in the desired format    
+        service_names = find_service_name(table_data, application_name) 
         if service_names:
             with open('output.json', 'w') as f:
                 json.dump(service_names, f)

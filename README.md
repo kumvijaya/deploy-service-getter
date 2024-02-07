@@ -1,18 +1,23 @@
 # Getting servcie names from confluence page
 
 ## Set up jenkins credentials
+- Type: UserNamePassword
+- Username: <<confluce user email>>
+- Password: <<conflunce api_token>>
+- ID: CONFLUENCE_CRED
 
-ID: CONFLUENCE_CRED
-
-Username: <<email_id>>
-
-Password: <<conflunce_api_token>>
-
-## To execute service getter script
-python service-getter.py --url "<<confluence_api_url>>"  --appname "<<application_name>>"
-
-Example
+## Update Jenkinsfile
+Update below variables in *Jenkinsfile*.
 ```
-python service-getter.py --url 'https://vijaik.atlassian.net/wiki/rest/api/content/33141?expand=body.storage' --appname 'RMI Platform'
+def confluenceBaseUrl = 'https://vijaik.atlassian.net/wiki'
+def confluencePageId = '33141'
 ```
+
+## Create Jenkins job and Test
+Create pipeline job using *Jenkinsfile* of this repo
+
+Execute the job
+It should print the services list as Json and map
+
+![jenkins-job-listing-services](https://github.com/kumvijaya/deploy-services-getter/blob/master/images/jenkins-job-listing-services.png)
 
