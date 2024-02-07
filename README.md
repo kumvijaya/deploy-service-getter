@@ -1,4 +1,4 @@
-# Getting servcie names from confluence page
+# Getting service names from confluence page
 
 ## Set up Jenkins credentials
 - Type: UserNamePassword
