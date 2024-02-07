@@ -7,12 +7,9 @@ node {
 
         withCredentials([usernamePassword(credentialsId: 'CONFLUENCE_CRED', usernameVariable: 'CONFLUENCE_USERNAME', passwordVariable: 'CONFLUENCE_APITOKEN')]) {
             script {
-                def serviceInfoCommand = """
-                    python -m pip install -r requirements.txt --user
-                    python service-getter.py --url "$confApiUrl" --appname "$appName"
-                    
-                """
-                def servicesOutput = sh(script: serviceInfoCommand, returnStdout: true).trim()
+                sh "python -m pip install -r requirements.txt --user"
+                def serviceGetterCmd = "python service-getter.py --url '$confApiUrl' --appname '$appName'"
+                String servicesOutput = sh(script: serviceGetterCmd, returnStdout: true).trim()
                 echo "Service list getter output: ${servicesOutput}"
             }
         }
