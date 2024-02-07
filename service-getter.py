@@ -132,9 +132,8 @@ if html_content:
         service_names = find_service_name(table_data, application_name)
         # Print the result in the desired format    
         if service_names:
-            service_names_json = json.dumps(service_names, indent=2)
-            print(service_names_json)
             with open('output.json', 'w') as f:
-                json.dump(service_names_json, f)
+                json.dump(service_names, f)
+            print(json.dumps(service_names, indent=2))
         else:
-            print(f"service names not found ")    
+            print(f"service names not found ")
