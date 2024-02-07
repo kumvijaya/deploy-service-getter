@@ -1,8 +1,18 @@
-# Confluence
+# Getting servcie names from confluence page
 
-## Environment variable setting 
-export CONFLUENCE_USERNAME=<email_id>
-export CONFLUENCE_APITOKEN=<conflunce_api_token>
+## Set up jenkins credentials
 
-## To execute the script
-python confluence_page.py -confluence_api_base <confluence_page>  -app_name "<application_name>"
+ID: CONFLUENCE_CRED
+
+Username: <<email_id>>
+
+Password: <<conflunce_api_token>>
+
+## To execute service getter script
+python service-getter.py --url "<<confluence_api_url>>"  --appname "<<application_name>>"
+
+Example
+```
+python service-getter.py --url 'https://vijaik.atlassian.net/wiki/rest/api/content/33141?expand=body.storage' --appname 'RMI Platform'
+```
+
