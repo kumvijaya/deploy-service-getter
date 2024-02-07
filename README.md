@@ -1,13 +1,14 @@
 # Getting servcie names from confluence page
 
-## Set up jenkins credentials
+## Set up Jenkins credentials
 - Type: UserNamePassword
 - Username: <<confluce user email>>
 - Password: <<conflunce api_token>>
 - ID: CONFLUENCE_CRED
 
 ## Update Jenkinsfile
-Update below variables in *Jenkinsfile*.
+Update below variables in *Jenkinsfile* as per the confluence page where services list exists.
+
 ```
 def confluenceBaseUrl = 'https://vijaik.atlassian.net/wiki'
 def confluencePageId = '33141'
