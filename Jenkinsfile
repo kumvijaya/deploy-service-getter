@@ -1,7 +1,7 @@
 def confluenceBaseUrl = 'https://vijaik.atlassian.net/wiki'
 def confluencePageId = '33141'
 def appName = 'RMI Platform'
-def confluenceApiUrl = f"${confluenceBaseUrl}/rest/api/content/${confluencePageId}?expand=body.storage"
+def confluenceApiUrl = "${confluenceBaseUrl}/rest/api/content/${confluencePageId}?expand=body.storage"
 
 node () {
     stage('Deploy Services') {
