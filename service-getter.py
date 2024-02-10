@@ -69,8 +69,9 @@ def extract_table_data(html_content):
     soup = BeautifulSoup(html_content, "html.parser")
     tables = soup.find_all("table")
     table = None
-    if table_index < len(tables):
-        table = tables[table_index]
+    index = int(table_index)
+    if index < len(tables):
+        table = tables[index]
     
     if table:
         # Extract table data as a list of lists
