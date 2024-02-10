@@ -8,10 +8,12 @@ import os
 argparser = argparse.ArgumentParser(prog='service-getter',
                                     description='To read table content from confluence page and providing output to jenkins pipeline')
 argparser.add_argument('-u', '--url', type=str, metavar='', required=True, help='url to access confluence page')
-argparser.add_argument('-a','--appname', type=str, metavar='', required=True, help='Application name')
+argparser.add_argument('-t', '--table_index', type=str, metavar='', required=True, help='Tabel index to read from confluence page')
+argparser.add_argument('-a', '--appname', type=str, metavar='', required=True, help='Application name')
 
 args = argparser.parse_args()
 confluence_rest_api = args.url
+table_index = args.table_index
 application_name = args.appname
 
 # Confluence Username and Apitoken
@@ -65,7 +67,10 @@ def extract_table_data(html_content):
         table_data : Extract table data as a list.
     """  
     soup = BeautifulSoup(html_content, "html.parser")
-    table = soup.find("table")
+    tables = soup.find_all("table")
+    table = None
+    if table_index < len(tables):
+        table = tables[table_index]
     
     if table:
         # Extract table data as a list of lists
