@@ -1,7 +1,6 @@
-def confluenceBaseUrl = 'https://vijaik.atlassian.net/wiki'
-def confluencePageId = '2523141' 
+def confluenceBaseUrl = 'https://vijaik.atlassian.net'
+def confluencePageId = '2523141'  // '33141' for test
 def table_index = 16
-// '33141'
 def appName = 'RMI Platform'
 def confluenceApiUrl = "${confluenceBaseUrl}/rest/api/content/${confluencePageId}?expand=body.storage"
 
