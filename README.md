@@ -18,7 +18,7 @@ def confluenceBaseUrl = 'https://vijaik.atlassian.net/wiki'
 def confluencePageId = '33141'
 def appTableIndex = 16
 ```
-- **confluenceBaseUrl**: Provide the base url parent path where the required page resides.
+- **confluenceBaseUrl**: Provide the base confluence url where the required page resides.
 
 - **confluencePageId**: Refer viewing [confluence page id](https://confluence.atlassian.com/confkb/how-to-get-confluence-page-id-648380445.html)
 
