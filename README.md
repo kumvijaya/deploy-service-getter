@@ -16,13 +16,13 @@ Update below variables in *Jenkinsfile* as per the confluence page where service
 ```
 def confluenceBaseUrl = 'https://vijaik.atlassian.net/wiki'
 def confluencePageId = '33141'
-def table_index = 16
+def appTableIndex = 16
 ```
 - **confluenceBaseUrl**: Provide the base url parent path where the required page resides.
 
 - **confluencePageId**: Refer viewing [confluence page id](https://confluence.atlassian.com/confkb/how-to-get-confluence-page-id-648380445.html)
 
-- **table_index**: Provide the table idnex. Currently the required table *PROD - Openshift Deployments* present as 16 th table (Starts with index 0).
+- **appTableIndex**: Provide the table index to get application services. Currently the required table *PROD - Openshift Deployments* present as 16 th table (Starts with index 0).
 
 ## Create Jenkins job and Test
 Create pipeline job using *Jenkinsfile* of this repo
