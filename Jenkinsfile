@@ -1,4 +1,4 @@
-def confluenceBaseUrl = 'https://vijaik.atlassian.net'
+def confluenceBaseUrl = 'https://vijaik.atlassian.net/wiki'
 def confluencePageId = '2523141'  // '33141' for test
 def table_index = 16
 def appName = 'RMI Platform'
