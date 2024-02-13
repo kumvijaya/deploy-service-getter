@@ -9,15 +9,15 @@ argparser = argparse.ArgumentParser(prog='service-getter',
                                     description='To read table content from confluence page and providing output to jenkins pipeline')
 argparser.add_argument('-u', '--url', type=str, metavar='', required=True, help='url to access confluence page')
 argparser.add_argument('-t', '--table_index', type=str, metavar='', required=True, help='Table index to read from confluence page')
-argparser.add_argument('-p', '--header_app', type=str, metavar='', required=True, help='Table application header name to read from confluence page')
-argparser.add_argument('-s', '--header_service', type=str, metavar='', required=True, help='Table service name header to read from confluence page')
+argparser.add_argument('-p', '--column_app', type=str, metavar='', required=True, help='Table application header name to read from confluence page')
+argparser.add_argument('-s', '--column_service', type=str, metavar='', required=True, help='Table service name header to read from confluence page')
 argparser.add_argument('-a', '--appname', type=str, metavar='', required=True, help='Application name')
 
 args = argparser.parse_args()
 confluence_rest_api = args.url
 table_index = args.table_index
-header_app = args.header_app
-header_service = args.header_service
+column_app = args.column_app
+column_service = args.column_service
 application_name = args.appname
 
 # Confluence Username and Apitoken
@@ -157,7 +157,7 @@ def write_service_output(service_names):
 if html_content:
     table_data = extract_table_data(html_content)
     if table_data:
-        service_names = find_service_name(table_data, application_name, header_app, header_service) 
+        service_names = find_service_name(table_data, application_name, column_app, column_service) 
         if service_names:
             write_service_output(service_names)
         else:

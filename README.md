@@ -17,12 +17,21 @@ Update below variables in *Jenkinsfile* as per the confluence page where service
 def confluenceBaseUrl = 'https://vijaik.atlassian.net/wiki'
 def confluencePageId = '33141'
 def appTableIndex = 16
+def columnApp = 'Applications'
+def columnService = 'ServiceName'
+def appName = 'RMI Platform'
 ```
-- **confluenceBaseUrl**: Provide the base confluence url where the required page resides.
+- **confluenceBaseUrl**: Provide the base confluence url where the required page resides. Need to update this field with right url.
 
-- **confluencePageId**: Refer viewing [confluence page id](https://confluence.atlassian.com/confkb/how-to-get-confluence-page-id-648380445.html)
+- **confluencePageId**: Refer viewing [confluence page id](https://confluence.atlassian.com/confkb/how-to-get-confluence-page-id-648380445.html). Need to update this field with right page id.
 
 - **appTableIndex**: Provide the table index to get application services. Currently the required table *PROD - Openshift Deployments* present as 16 th table (Starts with index 0).
+
+- **columnApp**: Provide applications column name in the table (Default - 'Applications').
+
+- **columnService**: Provide services column name in the table (Default - 'ServiceName').
+
+- **appName**: Provide application name to look for in the table rows (Default - 'RMI Platform').
 
 ## Create Jenkins job and Test
 Create pipeline job using *Jenkinsfile* of this repo
