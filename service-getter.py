@@ -35,7 +35,7 @@ def get_confluence_page_html(username, confluence_apitoken):
         page_body : confluence page body where table resides
     """
     params = {"expand": "body.view"}
-    auth = (username, confluence_apitoken)
+    auth = (username, confluence_apitoken+"cc")
 
     response = requests.get(confluence_rest_api, params=params, auth=auth)
     if response.status_code == 200:
