@@ -35,9 +35,9 @@ node () {
 }
 
 // def getJobParamters(parameters) {
-//     def jobParameters = []
-//     for(key, value in parameters) {
-//         jobParameters.add(new StringParameterValue(key, value))
-//     }
-//     return jobParameters
+//    def jobParameters = []
+//    for (entry in parameters) {
+//         jobParameters.add(new StringParameterValue(entry.key, entry.value))
+//    }
+//    return jobParameters
 // }
