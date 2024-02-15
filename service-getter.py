@@ -162,3 +162,50 @@ if html_content:
             write_service_output(service_names)
         else:
             print(f"Applications / Service names not found ")
+
+
+# Read mapping_info = service-job-mapping.json    
+# Lookup service name in mapping_info and get the corresponding job info (job_name, parameters)
+# Replace version parameter in the job parameters with the service version from the confluence page
+# Return below json format to jenkins pipeline
+# [
+# {
+#     "job": "rmi-core-job-api",
+#     "parameters": {
+#         "version": "1.21.0",
+#         "env": "dev",
+#         "isOk": "true",
+#         "selectOne": "Two"
+#     }
+# },
+# {
+#     "job": "rmi-core-ui",
+#     "parameters": {
+#         "version": "1.21.0",
+#         "env": "dev",
+#         "isOk": "true",
+#         "selectOne": "Two"
+#     }
+# },
+# {
+#     "job": "rmi-workflow-ui",
+#     "parameters": {
+#         "version": "1.21.0",
+#         "env": "dev",
+#         "isOk": "true",
+#         "selectOne": "Two"
+#     }
+# },
+# {
+#     "job": "rmi-workflow-job-api",
+#     "parameters": {
+#         "version": "1.21.0",
+#         "env": "dev",
+#         "isOk": "true",
+#         "selectOne": "Two"
+#     }
+# },
+# ...
+# ]
+            
+            

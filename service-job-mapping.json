@@ -1,0 +1,56 @@
+{
+    "RMI Core API": {
+        "job": "rmi-core-job-api",
+        "parameters": {
+            "version": "{{VERSION}}",
+            "env": "dev",
+            "isOk": "true",
+            "selectOne": "Two"
+        }
+    },
+    "RMI Core UI": {
+        "job": "rmi-core-ui",
+        "parameters": {
+            "version": "{{VERSION}}",
+            "env": "dev",
+            "isOk": "true",
+            "selectOne": "Two"
+        }
+    },
+    "RMI Workflow UI": {
+        "job": "rmi-workflow-ui",
+        "parameters": {
+            "version": "{{VERSION}}",
+            "env": "dev",
+            "isOk": "true",
+            "selectOne": "Two"
+        }
+    },
+    "RMI Workflow API": {
+        "job": "rmi-workflow-job-api",
+        "parameters": {
+            "version": "{{VERSION}}",
+            "env": "dev",
+            "isOk": "true",
+            "selectOne": "Two"
+        }
+    },
+    "RMI Core API-LN": {
+        "job": "rmi-ln-workflow-api",
+        "parameters": {
+            "version": "{{VERSION}}",
+            "env": "dev",
+            "isOk": "true",
+            "selectOne": "Two"
+        }
+    },
+    "RMI Core UI-LN": {
+        "job": "rmi-ln-job-ui",
+        "parameters": {
+            "version": "{{VERSION}}",
+            "env": "dev",
+            "isOk": "true",
+            "selectOne": "Two"
+        }
+    }
+}

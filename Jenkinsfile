@@ -1,4 +1,4 @@
-def confluenceBaseUrl = 'https://vijaik.atlassian.net/wiki/test'
+def confluenceBaseUrl = 'https://vijaik.atlassian.net/wiki'
 def confluencePageId = '2523141'  // '33141' for test
 def appTableIndex = 16
 def columnApp = 'Applications'
@@ -14,8 +14,19 @@ node () {
             def serviceGetterCmd = "python service-getter.py --url '$confluenceApiUrl' --table_index ${appTableIndex} --column_app '$columnApp' --column_service '$columnService' --appname '$appName'"
             def status = sh(script: serviceGetterCmd, returnStatus: true)
             if (status == 0) {
-                def servicesInfo = readJSON file: "output.json"
-                echo "Service getter output (Map): ${servicesInfo}"
+                def jobsInfo = readJSON file: "output.json"
+                echo "Service getter output (Map): ${jobsInfo}"
+                // for(jobInfo in jobs) {
+                //     jobs.put(jobInfo.job, {
+                //         stage(jobInfo.job) {
+                //             node {
+                //                 build(job: jobName, parameters: getJobParamters(jobInfo.parameters), propagate: false)
+                //             }
+                //         }
+                //     })
+                // }
+                // parallel(jobs)
+
             }else {
                 error "Failed to get services list from confluece page"
             }
@@ -23,4 +34,10 @@ node () {
     }
 }
 
-
+// def getJobParamters(parameters) {
+//     def jobParameters = []
+//     for(key, value in parameters) {
+//         jobParameters.add(new StringParameterValue(key, value))
+//     }
+//     return jobParameters
+// }
