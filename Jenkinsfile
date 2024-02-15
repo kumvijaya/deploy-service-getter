@@ -16,7 +16,8 @@ node () {
             if (status == 0) {
                 def jobsInfo = readJSON file: "output.json"
                 echo "Service getter output (Map): ${jobsInfo}"
-                // for(jobInfo in jobs) {
+                // Map jobs = [:]
+                // for(jobInfo in jobsInfo) {
                 //     jobs.put(jobInfo.job, {
                 //         stage(jobInfo.job) {
                 //             node {
