@@ -105,7 +105,7 @@ def clean_text(text):
     return cleaned_text
 
 
-def find_service_info(table_data, target_application_name, applications_key, service_name_key):
+def find_app_service_info(table_data, target_application_name, applications_key, service_name_key):
     """Get the service name from confluence page table
 
     Args:
@@ -117,16 +117,21 @@ def find_service_info(table_data, target_application_name, applications_key, ser
     Returns:
         dict: A dictionary containing the application name as key and the corresponding service names as value
     """
-    app_source = {}
+    app_service_map = {}
     for row in table_data:
-        if applications_key in row:
-            application_name = row[applications_key]
-            if target_application_name.lower() in application_name.lower():
-                application_name = clean_text(application_name)
-                if service_name_key in row:
-                    service_data = get_service_data_from_html(service_name_key, row)
-                    app_source[application_name] = service_data
-    return app_source
+        application_name = get_application_name_from_row(applications_key, target_application_name, row)
+        if application_name and service_name_key in row:
+            service_data = get_service_data_from_html(service_name_key, row)
+            app_service_map[application_name] = service_data
+    return app_service_map
+
+def get_application_name_from_row(applications_key, target_application_name, row):
+    application_name = None
+    if applications_key in row:
+        application_name = row[applications_key]
+        if target_application_name.lower() in application_name.lower():
+            application_name = clean_text(application_name)
+    return application_name
 
 def get_service_data_from_html(service_name_key, row):
     service_name_data = row[service_name_key]
@@ -137,7 +142,6 @@ def get_service_data_from_html(service_name_key, row):
 def write_service_output(service_names):
     with open('output.json', 'w') as f:
         json.dump(service_names, f)
-        # print(json.dumps(service_names, indent=2))
 
 def get_updated_service_job(service_map, version):
     updated_service_map = {}
@@ -180,8 +184,8 @@ html_content = get_confluence_page_html(username, confluence_apitoken)
 if html_content:
     table_data = extract_table_data(html_content)
     if table_data:
-        services_info = find_service_info(table_data, application_name, column_app, column_service) 
-        if services_info:
-            populate_jobs_info(services_info)
+        app_services_info = find_app_service_info(table_data, application_name, column_app, column_service) 
+        if app_services_info:
+            populate_jobs_info(app_services_info)
         else:
             print(f"Applications / Service names not found ")
