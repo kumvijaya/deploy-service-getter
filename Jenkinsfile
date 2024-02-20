@@ -14,19 +14,19 @@ node () {
             def serviceGetterCmd = "python service-getter.py --url '$confluenceApiUrl' --table_index ${appTableIndex} --column_app '$columnApp' --column_service '$columnService' --appname '$appName'"
             def status = sh(script: serviceGetterCmd, returnStatus: true)
             if (status == 0) {
-                def jobsInfo = readJSON file: "output.json"
+                def jobsInfo = readJSON file: "jobs.json"
                 echo "Service getter output (Map): ${jobsInfo}"
-                // Map jobs = [:]
-                // for(jobInfo in jobsInfo) {
-                //     jobs.put(jobInfo.job, {
-                //         stage(jobInfo.job) {
-                //             node {
-                //                 build(job: jobName, parameters: getJobParamters(jobInfo.parameters), propagate: false)
-                //             }
-                //         }
-                //     })
-                // }
-                // parallel(jobs)
+                Map jobs = [:]
+                for(jobInfo in jobsInfo) {
+                    jobs.put(jobInfo.job, {
+                        stage(jobInfo.job) {
+                            node {
+                                build(job: jobInfo.job, parameters: getJobParamters(jobInfo.parameters), propagate: false)
+                            }
+                        }
+                    })
+                }
+                parallel(jobs)
 
             }else {
                 error "Failed to get services list from confluece page"
@@ -35,10 +35,10 @@ node () {
     }
 }
 
-// def getJobParamters(parameters) {
-//    def jobParameters = []
-//    for (entry in parameters) {
-//         jobParameters.add(new StringParameterValue(entry.key, entry.value))
-//    }
-//    return jobParameters
-// }
+def getJobParamters(parameters) {
+   def jobParameters = []
+   for (entry in parameters) {
+        jobParameters.add(new StringParameterValue(entry.key, entry.value))
+   }
+   return jobParameters
+}

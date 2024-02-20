@@ -152,7 +152,7 @@ def write_service_output(service_names):
     """
     with open('output.json', 'w') as f:
         json.dump(service_names, f)
-    print(json.dumps(service_names, indent=2))
+        # print(json.dumps(service_names, indent=2))
 
 if html_content:
     table_data = extract_table_data(html_content)
@@ -160,52 +160,33 @@ if html_content:
         service_names = find_service_name(table_data, application_name, column_app, column_service) 
         if service_names:
             write_service_output(service_names)
+
+            # Read the content of the JSON file
+            json_file_path = 'service-job-mapping.json'
+            with open(json_file_path, 'r') as file:
+                service_mapping = json.load(file)
+
+            # Extract jobs from service_names
+            service_names_data = service_names[application_name]
+
+            updated_service_mapping = []
+            # Update the 'version' field in the JSON with corresponding version from service_names_data
+            for service_name, version in service_names_data.items():
+                # Check if the service_name is present in service_mapping
+                if service_name in service_mapping:
+                    # Check if 'parameters' is present before updating 'version'
+                    if 'parameters' in service_mapping[service_name]:
+                        service_mapping[service_name]['parameters']['version'] = version
+                    # Remove the outer key and append to the list
+                    updated_service_mapping.append(service_mapping[service_name])
+
+            # Print the updated JSON content
+            updated_json_content = json.dumps(updated_service_mapping, indent=2)
+            print(updated_json_content)
+
+            # write jobs to json output file
+            with open('jobs.json', 'w') as updated_file:
+                updated_file.write(updated_json_content)
+
         else:
             print(f"Applications / Service names not found ")
-
-
-# Read mapping_info = service-job-mapping.json    
-# Lookup service name in mapping_info and get the corresponding job info (job_name, parameters)
-# Replace version parameter in the job parameters with the service version from the confluence page
-# Return below json format to jenkins pipeline
-# [
-# {
-#     "job": "rmi-core-job-api",
-#     "parameters": {
-#         "version": "1.21.0",
-#         "env": "dev",
-#         "isOk": "true",
-#         "selectOne": "Two"
-#     }
-# },
-# {
-#     "job": "rmi-core-ui",
-#     "parameters": {
-#         "version": "1.21.0",
-#         "env": "dev",
-#         "isOk": "true",
-#         "selectOne": "Two"
-#     }
-# },
-# {
-#     "job": "rmi-workflow-ui",
-#     "parameters": {
-#         "version": "1.21.0",
-#         "env": "dev",
-#         "isOk": "true",
-#         "selectOne": "Two"
-#     }
-# },
-# {
-#     "job": "rmi-workflow-job-api",
-#     "parameters": {
-#         "version": "1.21.0",
-#         "env": "dev",
-#         "isOk": "true",
-#         "selectOne": "Two"
-#     }
-# },
-# ...
-# ]
-            
-            
