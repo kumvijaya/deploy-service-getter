@@ -48,6 +48,7 @@ def getJobDefinitions(jobsInfo) {
             jobs.put(jobName, jobDef)
         }
     }
+    return jobs
 }
 
 def getJobDefinition(jobName, parameters) {
