@@ -31,14 +31,14 @@ def getJobsFromConfluence() {
     def status = sh(script: serviceGetterCmd, returnStatus: true)
     def jobsInfo
     if (status == 0) {
-        def jobsInfo = readJSON file: "jobs.json"
+        jobsInfo = readJSON file: "jobs.json"
     }else {
         error "Failed to get services list from confluece page"
     }
 }
 
 def getJobDefinitions(jobsInfo) {
-     Map jobs = [:]
+    Map jobs = [:]
     for(jobInfo in jobsInfo) {
         String jobName = jobInfo.job
         echo "Job: ${jobName}"
