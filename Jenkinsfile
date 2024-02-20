@@ -18,15 +18,16 @@ node () {
                 echo "Service getter output (Map): ${jobsInfo}"
                 Map jobs = [:]
                 for(jobInfo in jobsInfo) {
-                    jobs.put(jobInfo.job, {
-                        stage(jobInfo.job) {
-                            node {
-                                build(job: jobInfo.job, parameters: getJobParamters(jobInfo.parameters), propagate: false)
-                            }
-                        }
-                    })
+                    echo "Job: ${jobInfo.job}"
+                    // jobs.put(jobInfo.job, {
+                    //     stage(jobInfo.job) {
+                    //         node {
+                    //             build(job: jobInfo.job, parameters: getJobParamters(jobInfo.parameters), propagate: false)
+                    //         }
+                    //     }
+                    // })
                 }
-                parallel(jobs)
+                //parallel(jobs)
 
             }else {
                 error "Failed to get services list from confluece page"
