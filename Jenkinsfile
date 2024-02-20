@@ -54,9 +54,7 @@ def getJobDefinitions(jobsInfo) {
 def getJobDefinition(jobName, parameters) {
     return {
         stage(jobName) {
-            node {
-                build(job: jobName, parameters: getJobParamters(parameters), propagate: false)
-            }
+            build(job: jobName, parameters: getJobParamters(parameters), propagate: false)
         }
     }
 }
