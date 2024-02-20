@@ -10,7 +10,7 @@ node () {
     stage('Deploy Services') {
         checkout scm
         withCredentials([usernamePassword(credentialsId: 'CONFLUENCE_CRED', usernameVariable: 'CONFLUENCE_USERNAME', passwordVariable: 'CONFLUENCE_APITOKEN')]) {
-            def jobsInfo = getJobsFromConfluence()
+            def jobsInfo = getJobsFromConfluence(confluenceApiUrl, appTableIndex, columnApp, columnService, appName)
             if(jobsInfo) {
                 executeJobs(jobsInfo)
             } else {
@@ -25,7 +25,7 @@ def executeJobs(jobsInfo) {
     parallel(jobs)
 }
 
-def getJobsFromConfluence() {
+def getJobsFromConfluence(confluenceApiUrl, appTableIndex, columnApp, columnService, appName) {
     sh "python -m pip install -r requirements.txt --user"
     def serviceGetterCmd = "python service-getter.py --url '$confluenceApiUrl' --table_index ${appTableIndex} --column_app '$columnApp' --column_service '$columnService' --appname '$appName'"
     def status = sh(script: serviceGetterCmd, returnStatus: true)
