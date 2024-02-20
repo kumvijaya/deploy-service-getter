@@ -41,9 +41,7 @@ def getJobDefinitions(jobsInfo) {
     Map jobs = [:]
     for(jobInfo in jobsInfo) {
         String jobName = jobInfo.job
-        echo "Job: ${jobName}"
         if(!jobs.containsKey(jobName)) {
-            echo "Adding job: ${jobName}"
             def jobDef = getJobDefinition(jobName, jobInfo.parameters)
             jobs.put(jobName, jobDef)
         }
