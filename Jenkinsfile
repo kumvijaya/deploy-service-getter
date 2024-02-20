@@ -18,19 +18,31 @@ node () {
                 echo "Service getter output (Map): ${jobsInfo}"
                 Map jobs = [:]
                 for(jobInfo in jobsInfo) {
-                    echo "Job: ${jobInfo.job}"
-                    // jobs.put(jobInfo.job, {
-                    //     stage(jobInfo.job) {
-                    //         node {
-                    //             build(job: jobInfo.job, parameters: getJobParamters(jobInfo.parameters), propagate: false)
-                    //         }
-                    //     }
-                    // })
+                    String jobName = jobInfo.job
+                    echo "Job: ${jobName}"
+                    if(!jobs.containsKey(jobName)) {
+                        String jobName = jobInfo.job
+                        def jobDef = getJobDef(jobName, getJobParamters(jobInfo.parameters))
+                        if(!jobs.containsKey(jobName)) {
+                            echo "Adding job: ${jobName}"
+                            jobs.put(jobName, jobDef)
+                        }
+                    }
                 }
-                //parallel(jobs)
+                parallel(jobs)
 
             }else {
                 error "Failed to get services list from confluece page"
+            }
+        }
+    }
+}
+
+def getJobDef(jobName, parameters) {
+    return {
+        stage(jobName) {
+            node {
+                build(job: jobName, parameters: , propagate: false)
             }
         }
     }
