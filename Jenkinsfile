@@ -21,12 +21,9 @@ node () {
                     String jobName = jobInfo.job
                     echo "Job: ${jobName}"
                     if(!jobs.containsKey(jobName)) {
-                        String jobName = jobInfo.job
-                        def jobDef = getJobDef(jobName, getJobParamters(jobInfo.parameters))
-                        if(!jobs.containsKey(jobName)) {
-                            echo "Adding job: ${jobName}"
-                            jobs.put(jobName, jobDef)
-                        }
+                        echo "Adding job: ${jobName}"
+                        def jobDef = getJobDef(jobName, jobInfo.parameters)
+                        jobs.put(jobName, jobDef)
                     }
                 }
                 parallel(jobs)
@@ -42,7 +39,7 @@ def getJobDef(jobName, parameters) {
     return {
         stage(jobName) {
             node {
-                build(job: jobName, parameters: , propagate: false)
+                build(job: jobName, parameters: getJobParamters(parameters), propagate: false)
             }
         }
     }
