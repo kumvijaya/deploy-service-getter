@@ -24,7 +24,7 @@ application_name = args.appname
 username = os.environ["CONFLUENCE_USERNAME"]
 confluence_apitoken = os.environ["CONFLUENCE_APITOKEN"]
 
-def get_confluence_page_html(username, confluence_apitoken):
+def get_confluence_page_html(username, confluence_token):
     """Get the confluence page to read the table data.
 
     Args:
@@ -35,19 +35,20 @@ def get_confluence_page_html(username, confluence_apitoken):
         page_body : confluence page body where table resides
     """
     params = {"expand": "body.view"}
-    auth = (username, confluence_apitoken)
-
+    auth = (username, confluence_token)
     response = requests.get(confluence_rest_api, params=params, auth=auth)
+    page_data = None
     if response.status_code == 200:
-        data = response.json()
-        storage_content = data.get("body", {}).get("storage", {}).get("value", "")
-        page_body = decode_confluence_storage(storage_content)
-        return page_body
+        page_data = get_page_data(response)
     else:
-        print(
-            f"Failed to retrieve Confluence page. Status code: {response.status_code}"
-        )
-        return None
+        print(f"Failed to retrieve Confluence page. Status code: {response.status_code}")
+    return page_data
+
+def get_page_data(response):
+    data = response.json()
+    storage_content = data.get("body", {}).get("storage", {}).get("value", "")
+    page_body = decode_confluence_storage(storage_content)
+    return page_body
 
 def decode_confluence_storage(storage_content):
     """Get the decode confluence storage data.
@@ -76,22 +77,20 @@ def extract_table_data(html_content):
     index = int(table_index)
     if index < len(tables):
         table = tables[index]
-    
+    table_data = None
     if table:
-        # Extract table data as a list of lists
-        table_data = []
-        header = [th.get_text(strip=True) for th in table.find_all('th')]
-        # for row in table.find_all("tr"):
-        for row in table.find_all('tr')[1:]:
-            # row_data = [
-                # cell.get_text(strip=True) for cell in row.find_all(["td", "th"])
-            row_data = [str(td) for td in row.find_all(['td', 'th'])]
-            # table_data.append(row_data)
-            table_data.append(dict(zip(header, row_data)))
-        return table_data
+        table_data = get_table_data(table)
     else:
         print("No table found on the Confluence page.")
-        return None
+    return table_data
+    
+def get_table_data(table):
+    table_data = []
+    header = [th.get_text(strip=True) for th in table.find_all('th')]
+    for row in table.find_all('tr')[1:]:
+        row_data = [str(td) for td in row.find_all(['td', 'th'])]
+        table_data.append(dict(zip(header, row_data)))
+    return table_data
 
 def clean_text(text):
     """Remove HTML tags and additional characters
@@ -106,7 +105,7 @@ def clean_text(text):
     return cleaned_text
 
 
-def find_service_name(table_data, target_application_name, applications_key, service_name_key):
+def find_service_info(table_data, target_application_name, applications_key, service_name_key):
     """Get the service name from confluence page table
 
     Args:
@@ -120,73 +119,69 @@ def find_service_name(table_data, target_application_name, applications_key, ser
     """
     app_source = {}
     for row in table_data:
-        # Check if applications_key is present in the row
-        if applications_key  in row:
+        if applications_key in row:
             application_name = row[applications_key]
             if target_application_name.lower() in application_name.lower():
-                # Clean application name
                 application_name = clean_text(application_name)
-
-                # Check if service_name_key key is present in the row
                 if service_name_key in row:
-                    service_name_data = row[service_name_key]
-                    # Extract service names and corresponding values
-                    service_names = [item.split(':') for item in service_name_data.split('<p>') if ':' in item]
-                    service_data = {name.strip(): clean_text(value) for name, value in service_names if len(name) > 0 and len(value) > 0}
-                    
+                    service_data = get_service_data_from_html(service_name_key, row)
                     app_source[application_name] = service_data
     return app_source
 
-#  To get confluence page data
-html_content = get_confluence_page_html(username, confluence_apitoken)
+def get_service_data_from_html(service_name_key, row):
+    service_name_data = row[service_name_key]
+    service_names = [item.split(':') for item in service_name_data.split('<p>') if ':' in item]
+    service_data = {name.strip(): clean_text(value) for name, value in service_names if len(name) > 0 and len(value) > 0}
+    return service_data
 
 def write_service_output(service_names):
-    """
-    Write the service names to an output file in JSON format.
-
-    Args:
-        service_names (list): A list of service names.
-
-    Returns:
-        None
-    """
     with open('output.json', 'w') as f:
         json.dump(service_names, f)
         # print(json.dumps(service_names, indent=2))
 
+def get_updated_service_job(service_map, version):
+    updated_service_map = {}
+    updated_service_map['job'] = service_map['job']
+    params = service_map['parameters']
+    updated_params = {}
+    for key, value in params.items():
+        updated_params[key] = value.replace('{{VERSION}}', version)
+    updated_service_map['parameters'] = updated_params
+    return updated_service_map
+
+def get_service_jobs_config():
+    json_file_path = 'service-job-mapping.json'
+    with open(json_file_path, 'r') as file:
+        service_mapping = json.load(file)
+    return service_mapping
+
+def write_jobs_json(updated_service_jobs):
+    updated_json_content = json.dumps(updated_service_jobs, indent=2)
+    print(updated_json_content)
+    with open('jobs.json', 'w') as updated_file:
+        updated_file.write(updated_json_content)
+
+def get_updated_service_jobs(service_jobs_config, app_service_info):
+    updated_service_jobs = []
+    for service_name, version in app_service_info.items():
+        if service_name in service_jobs_config:
+            service_job = service_jobs_config[service_name]
+            updated_service_jobs.append(get_updated_service_job(service_job, version))
+    return updated_service_jobs
+
+def populate_jobs_info(services_info):
+    write_service_output(services_info)
+    service_jobs_config = get_service_jobs_config()
+    app_service_info = services_info[application_name]
+    updated_service_jobs = get_updated_service_jobs(service_jobs_config, app_service_info)
+    write_jobs_json(updated_service_jobs)
+
+html_content = get_confluence_page_html(username, confluence_apitoken)
 if html_content:
     table_data = extract_table_data(html_content)
     if table_data:
-        service_names = find_service_name(table_data, application_name, column_app, column_service) 
-        if service_names:
-            write_service_output(service_names)
-
-            # Read the content of the JSON file
-            json_file_path = 'service-job-mapping.json'
-            with open(json_file_path, 'r') as file:
-                service_mapping = json.load(file)
-
-            # Extract jobs from service_names
-            service_names_data = service_names[application_name]
-
-            updated_service_mapping = []
-            # Update the 'version' field in the JSON with corresponding version from service_names_data
-            for service_name, version in service_names_data.items():
-                # Check if the service_name is present in service_mapping
-                if service_name in service_mapping:
-                    # Check if 'parameters' is present before updating 'version'
-                    if 'parameters' in service_mapping[service_name]:
-                        service_mapping[service_name]['parameters']['version'] = version
-                    # Remove the outer key and append to the list
-                    updated_service_mapping.append(service_mapping[service_name])
-
-            # Print the updated JSON content
-            updated_json_content = json.dumps(updated_service_mapping, indent=2)
-            print(updated_json_content)
-
-            # write jobs to json output file
-            with open('jobs.json', 'w') as updated_file:
-                updated_file.write(updated_json_content)
-
+        services_info = find_service_info(table_data, application_name, column_app, column_service) 
+        if services_info:
+            populate_jobs_info(services_info)
         else:
             print(f"Applications / Service names not found ")

@@ -1,5 +1,5 @@
 def confluenceBaseUrl = 'https://vijaik.atlassian.net/wiki'
-def confluencePageId = '2523141'  // '33141' for test
+def confluencePageId = '2523141'
 def appTableIndex = 16
 def columnApp = 'Applications'
 def columnService = 'ServiceName'
@@ -10,32 +10,47 @@ node () {
     stage('Deploy Services') {
         checkout scm
         withCredentials([usernamePassword(credentialsId: 'CONFLUENCE_CRED', usernameVariable: 'CONFLUENCE_USERNAME', passwordVariable: 'CONFLUENCE_APITOKEN')]) {
-            sh "python -m pip install -r requirements.txt --user"
-            def serviceGetterCmd = "python service-getter.py --url '$confluenceApiUrl' --table_index ${appTableIndex} --column_app '$columnApp' --column_service '$columnService' --appname '$appName'"
-            def status = sh(script: serviceGetterCmd, returnStatus: true)
-            if (status == 0) {
-                def jobsInfo = readJSON file: "jobs.json"
-                echo "Service getter output (Map): ${jobsInfo}"
-                Map jobs = [:]
-                for(jobInfo in jobsInfo) {
-                    String jobName = jobInfo.job
-                    echo "Job: ${jobName}"
-                    if(!jobs.containsKey(jobName)) {
-                        echo "Adding job: ${jobName}"
-                        def jobDef = getJobDef(jobName, jobInfo.parameters)
-                        jobs.put(jobName, jobDef)
-                    }
-                }
-                parallel(jobs)
-
-            }else {
-                error "Failed to get services list from confluece page"
-            }
+            def jobsInfo = getJobsFromConfluence()
+            if(jobsInfo) {
+                executeJobs(jobsInfo)
+            } else {
+                error "No jobs to execute. Exiting pipeline"
+            }           
         }
     }
 }
 
-def getJobDef(jobName, parameters) {
+def executeJobs(jobsInfo) {
+    Map jobs = getJobDefinitions(jobsInfo)
+    parallel(jobs)
+}
+
+def getJobsFromConfluence() {
+    sh "python -m pip install -r requirements.txt --user"
+    def serviceGetterCmd = "python service-getter.py --url '$confluenceApiUrl' --table_index ${appTableIndex} --column_app '$columnApp' --column_service '$columnService' --appname '$appName'"
+    def status = sh(script: serviceGetterCmd, returnStatus: true)
+    def jobsInfo
+    if (status == 0) {
+        def jobsInfo = readJSON file: "jobs.json"
+    }else {
+        error "Failed to get services list from confluece page"
+    }
+}
+
+def getJobDefinitions(jobsInfo) {
+     Map jobs = [:]
+    for(jobInfo in jobsInfo) {
+        String jobName = jobInfo.job
+        echo "Job: ${jobName}"
+        if(!jobs.containsKey(jobName)) {
+            echo "Adding job: ${jobName}"
+            def jobDef = getJobDefinition(jobName, jobInfo.parameters)
+            jobs.put(jobName, jobDef)
+        }
+    }
+}
+
+def getJobDefinition(jobName, parameters) {
     return {
         stage(jobName) {
             node {
