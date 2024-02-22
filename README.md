@@ -10,6 +10,14 @@ Note:
 - **Username**: Confluence user name
 - **Password**: Confluence personal access token. Refer creating [confluence personal access token](https://confluence.atlassian.com/enterprise/using-personal-access-tokens-1026032365.html)
 
+## Configure Service Job Mapping Json 
+
+Mapping json file **service-job-mapping.json** should be updated the job names and parameters key-vals for each service name.
+Also for the parameters that takes the version, need to put the place holder string "**{{VERSION}}**".
+Replace job names and required parameters accordingly.
+
+[service-job-mapping.json](https://github.com/kumvijaya/deploy-service-getter/blob/main/service-job-mapping.json)
+
 ## Update Jenkinsfile with confluence url and page id.
 Update below variables in *Jenkinsfile* as per the confluence page where services list exists.
 
@@ -34,10 +42,15 @@ def appName = 'RMI Platform'
 - **appName**: Provide application name to look for in the table rows (Default - 'RMI Platform').
 
 ## Create Jenkins job and Test
-Create pipeline job using *Jenkinsfile* of this repo
+Create master job using *Jenkinsfile* of this repo. This will work as master job.
 
-Execute the job
-It should print the services list as Json and Map
+Execute this master job.
 
-![jenkins-job-listing-services](https://github.com/kumvijaya/deploy-service-getter/blob/main/images/jenkins-job-listing-services.png)
+It should print the services list as Json and Map. All the services are executed separately as per Mapping Json File.
+Version in the Mapping file will be updated with the service version given in confluence page.
+
+![jenkins-job-listing-services](https://github.com/kumvijaya/deploy-service-getter/blob/main/images/jenkins-job-listing-services1.png)
+![jenkins-job-listing-services](https://github.com/kumvijaya/deploy-service-getter/blob/main/images/jenkins-job-listing-services2.png)
+![jenkins-job-listing-services](https://github.com/kumvijaya/deploy-service-getter/blob/main/images/jenkins-job-listing-services3.png)
+![jenkins-job-listing-services](https://github.com/kumvijaya/deploy-service-getter/blob/main/images/jenkins-job-listing-services4.png)
 
