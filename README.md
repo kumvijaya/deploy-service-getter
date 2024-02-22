@@ -1,4 +1,4 @@
-# Getting service names from confluence page
+# Master job for service deployments
 
 ## Setup Jenkins credentials for confluence connection
 - Type: UserNamePassword
@@ -13,7 +13,9 @@ Note:
 ## Configure Service Job Mapping Json 
 
 Mapping json file **service-job-mapping.json** should be updated the job names and parameters key-vals for each service name.
-Also for the parameters that takes the version, need to put the place holder string "**{{VERSION}}**".
+Also for the parameters that takes the version, put the place holder string "**{{VERSION}}**".
+Note: The version place holder will be replaced as the service version fetched from the confluence page.
+
 Replace job names and required parameters accordingly.
 
 [service-job-mapping.json](https://github.com/kumvijaya/deploy-service-getter/blob/main/service-job-mapping.json)
